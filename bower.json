@@ -1,0 +1,22 @@
+{
+  "name": "ebook-lyrics",
+  "version": "0.0.0",
+  "authors": [
+    "Attila Szeremi"
+  ],
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}

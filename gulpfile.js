@@ -5,6 +5,13 @@ var sass = require('gulp-sass');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
+var notify = require('gulp-notify');
+var bower = require('gulp-bower');
+
+var paths = {
+    scss: 'scss',
+    bower_intermediary: 'generated/bower'
+}
 
 // Lint Task
 gulp.task('lint', function() {
@@ -13,10 +20,25 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
+gulp.task('bower', function() {
+    return bower()
+        .pipe(gulp.dest('public/bower'))
+});
+
 // Compile Our Sass
 gulp.task('sass', function() {
-    return gulp.src('scss/*.scss')
-        .pipe(sass())
+    return gulp.src(paths.scss + '/*.scss')
+        .pipe(sass({
+            outputStyle: 'compressed',
+            sourceComments: 'map',
+            includePaths : [
+                paths.scss + '/*.scss',
+                'bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss',
+            ]
+        })
+            .on("error", notify.onError(function (error) {
+                return "Error: " + error.message;
+            })))
         .pipe(gulp.dest('public/css'));
 });
 
@@ -32,9 +54,10 @@ gulp.task('scripts', function() {
 
 // Watch Files For Changes
 gulp.task('watch', function() {
+    gulp.watch(['bower_components/**/*.js', 'bower_components/**/*.css'], ['lint', 'scripts']);
     gulp.watch('js/*.js', ['lint', 'scripts']);
     gulp.watch('scss/*.scss', ['sass']);
 });
 
 // Default Task
-gulp.task('default', ['lint', 'sass', 'scripts', 'watch']);
+gulp.task('default', ['bower', 'lint', 'sass', 'scripts']);

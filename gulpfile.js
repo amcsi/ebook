@@ -7,6 +7,7 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var notify = require('gulp-notify');
 var bower = require('gulp-bower');
+var react = require('gulp-react');
 
 var paths = {
     scss: 'scss',
@@ -16,6 +17,7 @@ var paths = {
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src('js/*.js')
+        .pipe(react())
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
@@ -46,6 +48,7 @@ gulp.task('sass', function() {
 gulp.task('scripts', function() {
     return gulp.src('js/*.js')
         .pipe(concat('all.js'))
+        .pipe(react())
         .pipe(gulp.dest('public/dist'))
         .pipe(rename('all.min.js'))
         .pipe(uglify())

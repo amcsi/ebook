@@ -35,7 +35,7 @@ gulp.task('sass', function() {
             sourceComments: 'map',
             includePaths : [
                 paths.scss + '/*.scss',
-                'bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss',
+                'bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss'
             ]
         })
             .on("error", notify.onError(function (error) {

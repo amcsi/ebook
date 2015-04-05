@@ -1,8 +1,12 @@
 // import bootstrap
 @import '../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss';
 
-$bgColor: #ddd;
+$colsMinHeight: 400px;
 
-body {
-	background-color: $bgColor;
+div.chaptersCol {
+	min-height: $colsMinHeight;
+}
+
+div.mainTextCol {
+	min-height: $colsMinHeight;
 }

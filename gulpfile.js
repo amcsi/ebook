@@ -36,11 +36,13 @@ gulp.task('sass', function() {
             includePaths : [
                 paths.scss + '/*.scss',
                 'bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss'
-            ]
-        })
-            .on("error", notify.onError(function (error) {
-                return "Error: " + error.message;
-            })))
+            ],
+            onError: function (error) {
+                notify({
+                    sound: true
+                }).write(error);
+            }
+        }))
         .pipe(gulp.dest('public/css'));
 });
 

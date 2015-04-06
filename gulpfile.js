@@ -18,6 +18,10 @@ var paths = {
 gulp.task('lint', function() {
     return gulp.src('js/*.js')
         .pipe(react())
+        .on('error', function (err) {
+            notifyError(err);
+            this.end();
+        })
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
@@ -51,6 +55,9 @@ gulp.task('scripts', function() {
     return gulp.src('js/*.js')
         .pipe(concat('all.js'))
         .pipe(react())
+        .on('error', function (err) {
+            this.end();
+        })
         .pipe(gulp.dest('public/dist'))
         .pipe(rename('all.min.js'))
         .pipe(uglify())
@@ -66,3 +73,13 @@ gulp.task('watch', function() {
 
 // Default Task
 gulp.task('default', ['bower', 'lint', 'sass', 'scripts']);
+
+
+/**
+ * Use gulp-notify to notify of an error
+ */
+function notifyError(msg) {
+    notify({
+        sound: true
+    }).write(msg);
+}

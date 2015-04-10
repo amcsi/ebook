@@ -12,17 +12,27 @@ var react = require('gulp-react');
 var paths = {
     scss: 'scss',
     bower_intermediary: 'generated/bower'
-}
+};
+var globs = {
+    jsFiles: 'js/*.js'
+};
+var isWatching = false;
 
 // Lint Task
 gulp.task('lint', function() {
-    return gulp.src('js/*.js')
-        .pipe(react())
+    return gulp.src(globs.jsFiles)
+        .pipe(react({harmony: true}))
         .on('error', function (err) {
+            console.error('lint: react error');
             notifyError(err);
             this.end();
         })
-        .pipe(jshint())
+        .pipe(jshint({esnext: true}))
+        .on('error', function (err) {
+            console.error('lint: jshint error');
+            notifyError(err);
+            this.end();
+        })
         .pipe(jshint.reporter('default'));
 });
 
@@ -52,22 +62,29 @@ gulp.task('sass', function() {
 
 // Concatenate & Minify JS
 gulp.task('scripts', function() {
-    return gulp.src('js/*.js')
+    return gulp.src(globs.jsFiles)
         .pipe(concat('all.js'))
-        .pipe(react())
+        .pipe(react({harmony: true}))
         .on('error', function (err) {
+            console.error('scripts: react error');
             this.end();
         })
         .pipe(gulp.dest('public/dist'))
         .pipe(rename('all.min.js'))
         .pipe(uglify())
+        .on('error', function (err) {
+            console.error('scripts: uglify error');
+            notifyError(err);
+            this.end();
+        })
         .pipe(gulp.dest('public/dist'));
 });
 
 // Watch Files For Changes
 gulp.task('watch', function() {
+    isWatching = true;
     gulp.watch(['bower_components/**/*.js', 'bower_components/**/*.css'], ['lint', 'scripts']);
-    gulp.watch('js/*.js', ['lint', 'scripts']);
+    gulp.watch('js/**/*.js', ['lint', 'scripts']);
     gulp.watch('scss/*.scss', ['sass']);
 });
 
@@ -79,7 +96,10 @@ gulp.task('default', ['bower', 'lint', 'sass', 'scripts']);
  * Use gulp-notify to notify of an error
  */
 function notifyError(msg) {
-    notify({
-        sound: true
-    }).write(msg);
+    if (isWatching) {
+        notify({
+            sound: true
+        }).write(msg);
+    }
+    console.error(msg);
 }

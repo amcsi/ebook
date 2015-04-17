@@ -2,7 +2,7 @@
 
 //require('./RecursiveSideChapters');
 
-class RecursiveSideChapters extends React.Component {
+class TreeSideChapterNode extends React.Component {
     
     getIndent() {
         var i, length;
@@ -18,27 +18,21 @@ class RecursiveSideChapters extends React.Component {
     render() {
         var indent = this.getIndent();
         var i, length, singleChapterData, parts;
+        var level = this.props.level;
 
-        var items = [];
-        var nextLevel = parseInt(this.props.level, 10) + 1;
+        var item = <h4>{indent} {this.props.data.name}</h4>;
 
-        for (i = 0, length = this.props.chapterData.length; i < length; i++) {
-            singleChapterData = this.props.chapterData[i];
-            var children = '';
-            if (singleChapterData.children && singleChapterData.children.length) {
-                children = <RecursiveSideChapters chapterData={singleChapterData.children} level={nextLevel} />;
-            }
-            items.push(
-                <div key={i}>
-                    <h4>{indent} {singleChapterData.name}</h4>
-                    {children}
-                </div>
-            );
+        var children;
+        if (this.props.data.children) {
+            children = this.props.data.children.map(function (item) {
+                return <TreeSideChapterNode level={level + 1} data={item} />;
+            });
         }
 
         return (
             <div>
-                {items}
+                {item}
+                {children}
             </div>
         );
     }
@@ -51,19 +45,15 @@ class SideChapterList extends React.Component {
         this.state = {
             chapterData: [
                 {
-                    key: 0,
                     name: 'Chapter 1',
                     children: [
                         {
-                            key: 1,
                             name: 'Chapter 1/A'
                         },
                         {
-                            key: 2,
                             name: 'Chapter 2/A',
                             children: [
                                 {
-                                    key: 3,
                                     name: 'Chapter 2/A/I'
                                 }
                             ]
@@ -71,7 +61,6 @@ class SideChapterList extends React.Component {
                     ]
                 },
                 {
-                    key: 4,
                     name: 'Chapter 2'
                 }
             ]
@@ -79,9 +68,14 @@ class SideChapterList extends React.Component {
     } 
 
     render() {
+
+        var children = this.state.chapterData.map(function (item) {
+            return <TreeSideChapterNode data={item} level={1} />;
+        });
+
         return (
             <div>
-                <RecursiveSideChapters chapterData={this.state.chapterData} level="1" />
+                {children}
             </div>
         );
     }

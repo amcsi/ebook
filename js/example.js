@@ -2,9 +2,9 @@
 
 //require('./RecursiveSideChapters');
 
-var RecursiveSideChapters = React.createClass({
+class RecursiveSideChapters extends React.Component {
     
-    getIndent: function() {
+    getIndent() {
         var i, length;
         var ret = '';
         for (i = 0, length = this.props.level; i < length; i++) {
@@ -13,9 +13,9 @@ var RecursiveSideChapters = React.createClass({
         ret += '|-';
 
         return ret;
-    },
+    }
 
-    render: function () {
+    render() {
         var indent = this.getIndent();
         var i, length, singleChapterData, parts;
 
@@ -42,11 +42,13 @@ var RecursiveSideChapters = React.createClass({
             </div>
         );
     }
-});
+}
 
-var SideChapterList = React.createClass({
-    getInitialState: function() {
-        return {
+class SideChapterList extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
             chapterData: [
                 {
                     key: 0,
@@ -74,14 +76,15 @@ var SideChapterList = React.createClass({
                 }
             ]
         };
-    },
-    render: function() {
+    } 
+
+    render() {
         return (
             <div>
                 <RecursiveSideChapters chapterData={this.state.chapterData} level="1" />
             </div>
         );
     }
-});
+}
 
 React.render(<SideChapterList />, document.getElementById('chaptersCol'));

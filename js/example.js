@@ -3,6 +3,44 @@
 //require('./RecursiveSideChapters');
 
 class TreeSideChapterNode extends React.Component {
+
+    constructor(props) {
+        this.state = {};
+    }
+
+    onTitleClick() {
+        console.info('lol');
+        this.setState({editing: true});
+    }
+
+    render() {
+        var i, length, singleChapterData, parts;
+        var level = this.props.level;
+
+        var item;
+        if (this.state.editing) {
+            item = <SideChapterTitleEditing level={level} data={this.props.data} />;
+        } else {
+            item = <SideChapterTitle level={level} data={this.props.data} onTitleClick={this.onTitleClick.bind(this)} />;
+        }
+
+        var children;
+        if (this.props.data.children) {
+            children = this.props.data.children.map(function (item, i) {
+                return <TreeSideChapterNode key={i} level={level + 1} data={item} />;
+            });
+        }
+
+        return (
+            <div>
+                {item}
+                {children}
+            </div>
+        );
+    }
+}
+
+class SideChapterTitle extends React.Component {
     
     getIndent() {
         var i, length;
@@ -15,26 +53,22 @@ class TreeSideChapterNode extends React.Component {
         return ret;
     }
 
+    onClick(evt) {
+        this.props.onTitleClick(this);
+    }
+
     render() {
         var indent = this.getIndent();
-        var i, length, singleChapterData, parts;
-        var level = this.props.level;
+        return <h4 onClick={this.onClick.bind(this)}>{indent} {this.props.data.name}</h4>;
 
-        var item = <h4>{indent} {this.props.data.name}</h4>;
+    }
+}
 
-        var children;
-        if (this.props.data.children) {
-            children = this.props.data.children.map(function (item) {
-                return <TreeSideChapterNode level={level + 1} data={item} />;
-            });
-        }
+class SideChapterTitleEditing extends SideChapterTitle {
+    render() {
+        var indent = this.getIndent();
 
-        return (
-            <div>
-                {item}
-                {children}
-            </div>
-        );
+        return <div>{indent} <input type="text" value={this.props.data.name} /></div>;
     }
 }
 
@@ -69,8 +103,8 @@ class SideChapterList extends React.Component {
 
     render() {
 
-        var children = this.state.chapterData.map(function (item) {
-            return <TreeSideChapterNode data={item} level={1} />;
+        var children = this.state.chapterData.map(function (item, i) {
+            return <TreeSideChapterNode key={i} data={item} level={1} />;
         });
 
         return (
